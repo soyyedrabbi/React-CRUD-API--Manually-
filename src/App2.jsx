@@ -1,10 +1,5 @@
-// import './App.css';
 import {useState} from 'react';
 const App2 = () => {
-    // let counter = 0;
-
-    // const [count, setCount] = useState(10);
-    // const [count2, setCount2] = useState(100);
 
     const [counterObj, setCounterObj] = useState({
         count1: 0,
@@ -12,9 +7,6 @@ const App2 = () => {
     })
     
     const increaseHandler = (value) => {
-        // counter++;
-        // console.log(counter)
-        // setCount(count + value);
         setCounterObj({
             ...counterObj,
             count1: counterObj.count1 + value,
@@ -22,9 +14,6 @@ const App2 = () => {
         })
     }
     const decreaseHandler = (value) => {
-        // counter--;
-        // console.log(counter)
-        // setCount(count - value);
         setCounterObj({
             ...counterObj,
             count1: counterObj.count1 - value,
