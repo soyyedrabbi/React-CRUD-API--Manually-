@@ -1,6 +1,6 @@
-ul{
+/* ul{
   list-style: none;
-}
+} */
 
 .App {
   text-align: center;
@@ -39,4 +39,21 @@ ul{
   to {
     transform: rotate(360deg);
   }
+}
+
+.student-form{
+  text-align: center;
+  margin-top: 20px;
+}
+
+.student-section{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 50px;
+}
+
+.list{
+  border:1px solid black;
+  border-radius: 5px;
+  padding: 10px;
 }
