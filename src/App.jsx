@@ -4,36 +4,98 @@ import './App.css';
 
 const App = () => {
 
-    const [todos, setTodos] = useState([]);
-    const [counter, setCounter] = useState(0);
-    const [counter2, setCounter2] = useState(10);
+    const [notes, setNotes] = useState([]);
+    const [noteTitle, setNoteTitle] = useState('');
+    const [editMode, setEditMode] = useState(false);
+    const [editableNote, setEditableNote] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState('');
 
-    useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/todos/')
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data, 'data');
-            setTodos(data)
+
+    const getAllNotes = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/notes`);
+            console.log(response);
+            if (!response.ok) {
+                throw new Error("Something went Wrong!");
+            }
+
+            const data = await response.json();
+            setNotes(data);
+            setIsLoading(false);
+            setNoteTitle('');
+        } catch (error) {
+            setIsLoading(false);
+            setErrorMessage(error.message)
+        }
+    }
+
+    const createHandler = (e) => {
+        e.preventDefault();
+        if (!noteTitle) {
+            return alert(`Please provide a valid title`);
+        }
+        const newNote = {
+            id: Date.now() + '',
+            title: noteTitle
+        }
+
+// create request to API/Server
+        fetch(`http://localhost:8080/notes`, {
+            method: "POST",
+            body: JSON.stringify(newNote),
+            headers: {
+                'Content-type': 'application/json'
+            }
         })
-        }, []);
+        .then(() => {
+            getAllNotes()
+        })
+    }
+
+// Delete request to API/Server
+
+    const removeHandler = (id) => {
+        fetch(`http://localhost:8080/notes/${id}` , {
+            method: "DELETE"
+        })
+        .then(() => {
+            getAllNotes()
+        })
+    }
+
+    
+    useEffect(() => {
+        getAllNotes()
+    }, [])
+
 
   return (
     <div className='App'>
-        <h2>All Todos</h2>
+        <form onSubmit={createHandler}>
+            <input type="text" value={noteTitle} onChange={(e) => setNoteTitle(e.target.value)} />
+            <button type='submit'>{editMode ? 'Update Note': 'Create Note'}</button>
+        </form>
         <ul>
-            {todos?.map((item) => 
-                <li key = {item.id}>
-                    {item.title}
+            {notes.map(note => (
+                <li key={note.id}>
+                    <span>{note.title}</span>
+                    <button>Edit</button>
+                    <button onClick={() => removeHandler(note.id)}>Delete</button>
                 </li>
-            )}
+            ))}
         </ul>
-        <h2>The value of the counter is {counter}</h2>
-        <button onClick={() => setCounter(counter + 1)}>Increase Counter</button>
-        <hr/>
-        <h2>The value of the counter2 is {counter2}</h2>
-        <button onClick={() => setCounter2(counter2 + 1)}>Increase Counter</button>
+        {isLoading && (
+            <div>Loading...............</div>
+        )}
+        {errorMessage && (
+            <p>{errorMessage}</p>
+        )}
     </div>
   )
 }
 
 export default App
+
+
+
