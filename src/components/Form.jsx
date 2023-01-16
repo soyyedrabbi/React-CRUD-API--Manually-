@@ -1,61 +1,55 @@
-import {useState} from "react";
+import React from 'react';
+import {useContext} from "react";
+import {StudentContext} from './../Contexts/Student';
 
-const Forms = (props) => {
-    
-    const createHandler = (e) => {
-        e.preventDefault();
-        if (!props.noteTitle){
-            return alert('Please Provide a Valid Title');
-        }
-        const newNote = {
-            id: Date.now() + '',
-            title: props.noteTitle,
-        };
+const Form = () => {
+  const studentCtx = useContext(StudentContext);
 
-        props.setNotes([...props.notes, newNote]);
-        props.setNoteTitle('');
-    };
-
-    const updateHandler = (e) => {
-        e.preventDefault();
-        if(!props.noteTitle){
-            return alert ('Please Provide a valid title')
-        }
-
-        const newNotes = props.notes.map((item) => {
-            if(item.id === props.editableNote.id){
-                item.title = props.noteTitle;
-            };
-            return item;
-        })
-
-        props.setNotes(newNotes);
-        props.setEditMode(false);
-        props.setEditableNote(null);
-        props.setNoteTitle('');
+  const createStudentHandler = (e) => {
+    e.preventDefault();
+    if(!studentCtx.studentName){
+        return alert ('Please provide a valid name...');
+    }
+    const newStudent = {
+        id: Date.now() + '',
+        name: studentCtx.studentName
     }
 
-  return (
-    <form
-      onSubmit={(e) => {
-        props.editMode ? updateHandler(e) : createHandler(e);
-      }}
-    >
-      <input
-        value={props.noteTitle}
-        type="text"
-        onChange={(event) => props.setNoteTitle(event.target.value)}
-      />
-      <button
-        onClick={(e) => {
-          props.editMode ? updateHandler(e) : createHandler(e);
-        }}
-        type="submit"
-      >
-        {props.editMode ? "Update Note" : "Add Note"}
-      </button>
-    </form>
-  );
-};
+    studentCtx.setStudents([...studentCtx.students, newStudent]);
+    studentCtx.setStudentName('')
+}
 
-export default Forms;
+  const updateHandler = (e) => {
+    e.preventDefault();
+    if(!studentCtx.studentName){
+        return alert ('Please provide a valid name...');
+    }
+    
+    const newStudentList = studentCtx.students.map((item) => {
+        if (item.id === studentCtx.editableStudent.id){
+            item.name = studentCtx.studentName;
+        };
+        return item;
+    })
+
+    studentCtx.setStudents(newStudentList);
+
+    studentCtx.setStudentName('');
+    studentCtx.setEditMode(false);
+    studentCtx.setEditableStudent(null);
+  }
+
+  return (
+    <form onSubmit={(e) => {
+          studentCtx.editMode ? updateHandler(e) : createStudentHandler(e)
+        }} className='student-form'>
+            <input type="text" value={studentCtx.studentName} onChange={(e) => studentCtx.setStudentName(e.target.value)} />
+
+            <button onClick={(e) => {
+          studentCtx.editMode ? updateHandler(e) : createStudentHandler(e)
+        }} type="submit">{studentCtx.editMode ? 'Update Note' : 'Add Note'}</button>
+    </form>
+  )
+}
+
+export default Form
